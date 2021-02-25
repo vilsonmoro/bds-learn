@@ -1,54 +1,59 @@
 package com.devsuperior.dslearnbds.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-
 @Entity
-@Table(name = "tb_section")
-public class Section implements Serializable {
+@Table(name = "tb_lesson")
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Lesson implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	private String title;
-	private String description;
-	private String position;
-	private String ImgUri;
+	private Integer position;
 
 	@ManyToOne
-	@JoinColumn(name = "resource_id")
-	private Resource resource;
+	@JoinColumn(name = "section_id")
+	private Section section;
 
-	@ManyToOne
-	@JoinColumn(name = "prerequisite_id")
-	private Section prerequisite;
-	
-	
+	@ManyToMany
+	@JoinTable(name = "tb_lessons_done", 
+	        joinColumns = @JoinColumn(name = "lesson_id"), 
+	        inverseJoinColumns = {
+			     @JoinColumn(name = "user_id"), 
+			     @JoinColumn(name = "offer_id")
+			 }
+	)
+	private Set<Enrollment> enrollmentsDone = new HashSet<>();
 
-	public Section() {
+	public Lesson() {
 
 	}
 
-	public Section(Long id, String title, String description, String position, String imgUri, Resource resource,
-			Section prerequisite) {
+	public Lesson(Long id, String title, Integer position, Section section) {
 		this.id = id;
 		this.title = title;
-		this.description = description;
 		this.position = position;
-		ImgUri = imgUri;
-		this.resource = resource;
-		this.prerequisite = prerequisite;
+		this.section = section;
 	}
 
 	public Long getId() {
@@ -67,44 +72,24 @@ public class Section implements Serializable {
 		this.title = title;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getPosition() {
+	public Integer getPosition() {
 		return position;
 	}
 
-	public void setPosition(String position) {
+	public void setPosition(Integer position) {
 		this.position = position;
 	}
 
-	public String getImgUri() {
-		return ImgUri;
+	public Section getSection() {
+		return section;
 	}
 
-	public void setImgUri(String imgUri) {
-		ImgUri = imgUri;
+	public void setSection(Section section) {
+		this.section = section;
 	}
 
-	public Resource getResource() {
-		return resource;
-	}
-
-	public void setResource(Resource resource) {
-		this.resource = resource;
-	}
-
-	public Section getPrerequisite() {
-		return prerequisite;
-	}
-
-	public void setPrerequisite(Section prerequisite) {
-		this.prerequisite = prerequisite;
+	public Set<Enrollment> getEnrollmentsDone() {
+		return enrollmentsDone;
 	}
 
 	@Override
@@ -123,7 +108,7 @@ public class Section implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Section other = (Section) obj;
+		Lesson other = (Lesson) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
