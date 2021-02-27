@@ -14,7 +14,6 @@ import com.devsuperior.dslearnbds.services.NotificationService;
 
 @RestController
 @RequestMapping(value = "/notifications")
-
 public class NotificationResource {
 	@Autowired
 	private NotificationService service;
