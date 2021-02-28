@@ -35,12 +35,13 @@ public class Notification implements Serializable {
 	public Notification() {
 	}
 
-	public Notification(Long id, String text, Instant moment, boolean read, String route) {
+	public Notification(Long id, String text, Instant moment, boolean read, String route, User user) {
 		this.id = id;
 		this.text = text;
 		this.moment = moment;
 		this.read = read;
 		this.route = route;
+		this.user = user;
 	}
 
 	public Long getId() {
